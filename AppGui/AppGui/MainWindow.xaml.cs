@@ -8,6 +8,9 @@ using System.Xml.Linq;
 using mmisharp;
 using Newtonsoft.Json;
 using MPC_HC.Domain;
+using MPC_HC.Domain.Helpers;
+using MPC_HC.Domain.Interfaces;
+using MPC_HC.Domain.Services;
 
 namespace AppGui
 {
@@ -25,12 +28,12 @@ namespace AppGui
             mpcHomeCinema = new MPCHomeCinema("http://localhost:13579");
 
             mmiC = new MmiCommunication("localhost",8000, "User1", "GUI");
-            mmiC.Message += MmiC_Message;
+            mmiC.Message += MmiC_MessageAsync;
             mmiC.Start();
 
         }
 
-        private void MmiC_Message(object sender, MmiEventArgs e)
+        private async void MmiC_MessageAsync(object sender, MmiEventArgs e)
         {
             Console.WriteLine(e.Message);
             var doc = XDocument.Parse(e.Message);
@@ -38,16 +41,43 @@ namespace AppGui
             dynamic json = JsonConvert.DeserializeObject(com);
 
             Shape _s = null;
+            var info = await mpcHomeCinema.GetInfo();
+            Console.WriteLine($"{info.FileName} is playing");
+            Console.WriteLine($"{info.State} is its state");
             switch ((string)json.recognized[0].ToString())
             {
-                case "PLAY":
-                    mpcHomeCinema.PlayAsync();
+                case "PLAY": 
+                    await mpcHomeCinema.PlayAsync();
                     break;
                 case "PAUSE":
-                    mpcHomeCinema.PauseAsync();
+                    await mpcHomeCinema.PauseAsync();
                     break;
-                /*case "TRIANGLE": _s = triangle;
-                    break;*/
+                case "NEXT":
+                    await mpcHomeCinema.NextAsync();
+                    break;
+                case "BACK":
+                    await mpcHomeCinema.PrevAsync();
+                    break;
+                case "MUTE":
+                    await mpcHomeCinema.MuteAsync();
+                    break;
+                case "UNMUTE":
+                    await mpcHomeCinema.UnMuteAsync();
+                    break;
+                case "VUP":
+                    info = await mpcHomeCinema.GetInfo();
+                    if (info.VolumeLevel <= 80)
+                    {
+                        await mpcHomeCinema.SetVolumeLevel(info.VolumeLevel + 20);
+                    }
+                    break;
+                case "VDOWN":
+                    info = await mpcHomeCinema.GetInfo();
+                    if (info.VolumeLevel >= 20)
+                    {
+                        await mpcHomeCinema.SetVolumeLevel(info.VolumeLevel - 20);
+                    }
+                    break;
             }
 
             /*App.Current.Dispatcher.Invoke(() =>
