@@ -17,10 +17,12 @@ namespace AppGui
     public partial class MainWindow : Window
     {
         private MmiCommunication mmiC;
+        private static MPCHomeCinema mpcHomeCinema;
         public MainWindow()
         {
             InitializeComponent();
 
+            mpcHomeCinema = new MPCHomeCinema("http://localhost:13579");
 
             mmiC = new MmiCommunication("localhost",8000, "User1", "GUI");
             mmiC.Message += MmiC_Message;
@@ -38,15 +40,17 @@ namespace AppGui
             Shape _s = null;
             switch ((string)json.recognized[0].ToString())
             {
-                case "SQUARE": _s = rectangle;
+                case "PLAY":
+                    mpcHomeCinema.PlayAsync();
                     break;
-                case "CIRCLE": _s = circle;
+                case "PAUSE":
+                    mpcHomeCinema.PauseAsync();
                     break;
-                case "TRIANGLE": _s = triangle;
-                    break;
+                /*case "TRIANGLE": _s = triangle;
+                    break;*/
             }
 
-            App.Current.Dispatcher.Invoke(() =>
+            /*App.Current.Dispatcher.Invoke(() =>
             {
                 switch ((string)json.recognized[1].ToString())
                 {
@@ -62,7 +66,7 @@ namespace AppGui
                         _s.Fill = Brushes.Red;
                         break;
                 }
-            });
+            });*/
             
 
 
