@@ -154,3 +154,4 @@ C:\Users\Wojtek\Desktop\Basis4Assignment2\AppGui\AppGui\bin\Debug\vi\Humanizer.r
 C:\Users\Wojtek\Desktop\Basis4Assignment2\AppGui\AppGui\bin\Debug\zh-CN\Humanizer.resources.dll
 C:\Users\Wojtek\Desktop\Basis4Assignment2\AppGui\AppGui\bin\Debug\zh-Hans\Humanizer.resources.dll
 C:\Users\Wojtek\Desktop\Basis4Assignment2\AppGui\AppGui\bin\Debug\zh-Hant\Humanizer.resources.dll
+C:\Users\Wojtek\Desktop\Basis4Assignment2\AppGui\AppGui\bin\Debug\Microsoft.Speech.dll

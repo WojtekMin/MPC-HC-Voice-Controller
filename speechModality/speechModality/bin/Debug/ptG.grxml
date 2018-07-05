@@ -8,14 +8,44 @@
 	</rule>
 	<rule id="command">
 	  <one-of>
+      
 		<item>Play<tag>out="PLAY"</tag></item>
+    <item>Continue<tag>out="PLAY"</tag></item>
+    <item>Keep playing<tag>out="PLAY"</tag></item>
+      
 		<item>Pause<tag>out="PAUSE"</tag></item>
+    <item>I'll be back<tag>out="PAUSE"</tag></item>
+    <item>Take a break<tag>out="PAUSE"</tag></item>
+      
     <item>Next<tag>out="NEXT"</tag></item>
+    <item>I don't like this movie<tag>out="NEXT"</tag></item>
+    <item>I hate this movie<tag>out="NEXT"</tag></item>
+    <item>Change to another one<tag>out="NEXT"</tag></item>
+    <item>I want to watch next movie<tag>out="NEXT"</tag></item>
+      
     <item>Go back<tag>out="BACK"</tag></item>
+    <item>Play last movie<tag>out="BACK"</tag></item>
+    <item>I want to watch previous movie<tag>out="BACK"</tag></item>
+    <item>Repeat last movie<tag>out="BACK"</tag></item>
+      
     <item>Volume up<tag>out="VUP"</tag></item>
+    <item>Turn up the volume<tag>out="VUP"</tag></item>
+    <item>Increase the volume<tag>out="VUP"</tag></item>
+    <item>That's too quiet<tag>out="VUP"</tag></item>  
+      
     <item>Volume down<tag>out="VDOWN"</tag></item>
+    <item>Turn down the volume<tag>out="VDOWN"</tag></item>
+    <item>Lower the volume<tag>out="VDOWN"</tag></item>  
+    <item>That's too loud<tag>out="VDOWN"</tag></item>
+      
     <item>Mute<tag>out="MUTE"</tag></item>
+    <item>Cut the sound<tag>out="MUTE"</tag></item>
+      
     <item>Unmute<tag>out="UNMUTE"</tag></item>
+    <item>I can't hear anything<tag>out="UNMUTE"</tag></item>
+      
+    <item>Open file<tag>out="OPENFILE"</tag></item>
+    
 	  </one-of>
 	</rule>
 </grammar>

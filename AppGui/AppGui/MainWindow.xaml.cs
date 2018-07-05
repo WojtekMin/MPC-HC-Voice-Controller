@@ -11,6 +11,7 @@ using MPC_HC.Domain;
 using MPC_HC.Domain.Helpers;
 using MPC_HC.Domain.Interfaces;
 using MPC_HC.Domain.Services;
+using multimodal;
 
 namespace AppGui
 {
@@ -21,9 +22,11 @@ namespace AppGui
     {
         private MmiCommunication mmiC;
         private static MPCHomeCinema mpcHomeCinema;
+        private Tts t = new Tts();
         public MainWindow()
         {
             InitializeComponent();
+            //t.Speak("M P C H C is not running, can you please turn it on ?");
 
             mpcHomeCinema = new MPCHomeCinema("http://localhost:13579");
 
@@ -77,6 +80,9 @@ namespace AppGui
                     {
                         await mpcHomeCinema.SetVolumeLevel(info.VolumeLevel - 20);
                     }
+                    break;
+                case "OPENFILE":
+                    await mpcHomeCinema.OpenFileAsync("C:\\Users\\Public\\Videos\\SampleVideos\\Animals.wmv");
                     break;
             }
 
