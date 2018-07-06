@@ -26,86 +26,257 @@ namespace AppGui
         public MainWindow()
         {
             InitializeComponent();
-            //t.Speak("M P C H C is not running, can you please turn it on ?");
 
             mpcHomeCinema = new MPCHomeCinema("http://localhost:13579");
 
             mmiC = new MmiCommunication("localhost",8000, "User1", "GUI");
-            mmiC.Message += MmiC_MessageAsync;
+            mmiC.Message += MmiC_Message;
             mmiC.Start();
 
         }
 
-        private async void MmiC_MessageAsync(object sender, MmiEventArgs e)
+        private async void MmiC_Message(object sender, MmiEventArgs e)
         {
             Console.WriteLine(e.Message);
             var doc = XDocument.Parse(e.Message);
             var com = doc.Descendants("command").FirstOrDefault().Value;
             dynamic json = JsonConvert.DeserializeObject(com);
 
-            Shape _s = null;
+            //double confidence = Double.Parse((string)json.recognized[0].ToString());
+            String command = (string)json.recognized[0].ToString();
+            String movie = (string)json.recognized[1].ToString();
+            String number = (string)json.recognized[2].ToString();
+            String time = (string)json.recognized[3].ToString();
+
             var info = await mpcHomeCinema.GetInfo();
             Console.WriteLine($"{info.FileName} is playing");
             Console.WriteLine($"{info.State} is its state");
-            switch ((string)json.recognized[0].ToString())
+            switch (command)
             {
-                case "PLAY": 
-                    await mpcHomeCinema.PlayAsync();
+                case "HELP":
+                    if (movie == "EMP" && number == "EMP" && time == "EMP")
+                    {
+                        t.Speak("Hello. You can play or pause movie, change volume, mute or unmute, skip movie or play last one, skip or rewind given time stamp, or open new movie.");
+                    }
+                    else
+                    {
+                        t.Speak("This command is forbidden");
+                    }
+                    break;
+                case "PLAY":
+                    if (movie == "EMP" && number == "EMP" && time == "EMP")
+                    {
+                        await mpcHomeCinema.PlayAsync();
+                    }
+                    else
+                    {
+                        t.Speak("This command is forbidden");
+                    }
                     break;
                 case "PAUSE":
-                    await mpcHomeCinema.PauseAsync();
+                    if (movie == "EMP" && number == "EMP" && time == "EMP")
+                    {
+                        await mpcHomeCinema.PauseAsync();
+                    }
+                    else
+                    {
+                        t.Speak("This command is forbidden");
+                    }
                     break;
                 case "NEXT":
-                    await mpcHomeCinema.NextAsync();
+                    if (movie == "EMP" && number == "EMP" && time == "EMP")
+                    {
+                        await mpcHomeCinema.NextAsync();
+                    }
+                    else
+                    {
+                        t.Speak("This command is forbidden");
+                    }
                     break;
                 case "BACK":
-                    await mpcHomeCinema.PrevAsync();
+                    if (movie == "EMP" && number == "EMP" && time == "EMP")
+                    {
+                        await mpcHomeCinema.PrevAsync();
+                    }
+                    else
+                    {
+                        t.Speak("This command is forbidden");
+                    }
+                    break;
+                case "MOVEFWD":
+                    info = await mpcHomeCinema.GetInfo();
+                    if (movie == "EMP" && number != "EMP" && time != "EMP")
+                    {
+                        await App.Current.Dispatcher.Invoke(async () =>
+                        {
+                            
+                            if (time == "HOUR")
+                            {
+                                await mpcHomeCinema.SetPosition(new TimeSpan(info.Position.Hours + int.Parse(number), info.Position.Minutes, info.Position.Seconds));
+                            }
+                            else if (time == "MINUTE")
+                            {
+                                await mpcHomeCinema.SetPosition(new TimeSpan(info.Position.Hours, info.Position.Minutes + int.Parse(number), info.Position.Seconds));
+                            }
+                            else if (time == "SECOND")
+                            {
+                                await mpcHomeCinema.SetPosition(new TimeSpan(info.Position.Hours, info.Position.Minutes, info.Position.Seconds + int.Parse(number)));
+                            }
+                        });
+                    }
+                    else
+                    {
+                        t.Speak("This command is forbidden");
+                    }
+                    break;
+                case "MOVEBWD":
+                    info = await mpcHomeCinema.GetInfo();
+                    if (movie == "EMP" && number != "EMP" && time != "EMP")
+                    {
+                        await App.Current.Dispatcher.Invoke(async () =>
+                        {
+
+                            if (time == "HOUR")
+                            {
+                                await mpcHomeCinema.SetPosition(new TimeSpan(info.Position.Hours - int.Parse(number), info.Position.Minutes, info.Position.Seconds));
+                            }
+                            else if (time == "MINUTE")
+                            {
+                                await mpcHomeCinema.SetPosition(new TimeSpan(info.Position.Hours, info.Position.Minutes - int.Parse(number), info.Position.Seconds));
+                            }
+                            else if (time == "SECOND")
+                            {
+                                await mpcHomeCinema.SetPosition(new TimeSpan(info.Position.Hours, info.Position.Minutes, info.Position.Seconds - int.Parse(number)));
+                            }
+                        });
+                    }
+                    else
+                    {
+                        t.Speak("This command is forbidden");
+                    }
+                    break;
+                case "SETTIME":
+                    if (movie == "EMP" && number != "EMP" && time != "EMP")
+                    {
+                        await App.Current.Dispatcher.Invoke(async () =>
+                        {
+                            if (time == "HOUR")
+                            {
+                                await mpcHomeCinema.SetPosition(new TimeSpan(int.Parse(number), 0, 0));
+                            }
+                            else if (time == "MINUTE")
+                            {
+                                await mpcHomeCinema.SetPosition(new TimeSpan(0, int.Parse(number), 0));
+                            }
+                            else if (time == "SECOND")
+                            {
+                                await mpcHomeCinema.SetPosition(new TimeSpan(0, 0, int.Parse(number)));
+                            }
+                        });
+                    }
+                    else
+                    {
+                        t.Speak("This command is forbidden");
+                    }
                     break;
                 case "MUTE":
-                    await mpcHomeCinema.MuteAsync();
+                    if (movie == "EMP" && number == "EMP" && time == "EMP")
+                    {
+                        await mpcHomeCinema.MuteAsync();
+                    }
+                    else
+                    {
+                        t.Speak("This command is forbidden");
+                    }
                     break;
                 case "UNMUTE":
-                    await mpcHomeCinema.UnMuteAsync();
+                    if (movie == "EMP" && number == "EMP" && time == "EMP")
+                    {
+                        await mpcHomeCinema.UnMuteAsync();
+                    }
+                    else
+                    {
+                        t.Speak("This command is forbidden");
+                    }
+                    break;
+                case "SETVOL":
+                    if (number == "EMP" && time != "EMP" && movie != "EMP")
+                    {
+                        t.Speak("This command is forbidden");
+                    }
+                    else
+                    {
+                        info = await mpcHomeCinema.GetInfo();
+                        await App.Current.Dispatcher.Invoke(async () =>
+                        {
+                            await mpcHomeCinema.SetVolumeLevel(int.Parse(number));
+                        });
+                    }
                     break;
                 case "VUP":
                     info = await mpcHomeCinema.GetInfo();
-                    if (info.VolumeLevel <= 80)
+                    if (movie == "EMP" && number == "EMP" && time == "EMP")
                     {
-                        await mpcHomeCinema.SetVolumeLevel(info.VolumeLevel + 20);
+                        if (info.VolumeLevel <= 80)
+                        {
+                            await mpcHomeCinema.SetVolumeLevel(info.VolumeLevel + 20);
+                        }
+                        else
+                        {
+                            t.Speak("You can only increase volume by 20 points with this command. If you want to do it with custom number of points, please use set volume command,");
+                        }
+                    }
+                    else
+                    {
+                        t.Speak("This command is forbidden");
                     }
                     break;
                 case "VDOWN":
                     info = await mpcHomeCinema.GetInfo();
-                    if (info.VolumeLevel >= 20)
+                    if (movie == "EMP" && number == "EMP" && time == "EMP")
                     {
-                        await mpcHomeCinema.SetVolumeLevel(info.VolumeLevel - 20);
+                        if (info.VolumeLevel >= 20)
+                        {
+                            await mpcHomeCinema.SetVolumeLevel(info.VolumeLevel - 20);
+                        }
+                        else
+                        {
+                            t.Speak("You can only decrease volume by 20 points with this command. If you want to do it with custom number of points, please use set volume command,");
+                        }
+                    }
+                    else
+                    {
+                        t.Speak("This command is forbidden");
                     }
                     break;
                 case "OPENFILE":
-                    await mpcHomeCinema.OpenFileAsync("C:\\Users\\Public\\Videos\\SampleVideos\\Animals.wmv");
+                    if (movie == "EMP" || number != "EMP" || time != "EMP")
+                    {
+                        t.Speak("This command is forbidden");
+                    }
+                    else
+                    {
+                        await App.Current.Dispatcher.Invoke(async () =>
+                         {
+                             switch (movie)
+                             {
+                                 case "ANIMALS":
+                                     await mpcHomeCinema.OpenFileAsync("C:\\Users\\Public\\Videos\\SampleVideos\\Animals.wmv");
+                                     break;
+                                 case "ODYSSEY":
+                                     await mpcHomeCinema.OpenFileAsync("C:\\Users\\Public\\Videos\\SampleVideos\\2001_ A SPACE ODYSSEY - Trailer.mp4");
+                                     break;
+                                 case "BLUEPLANET":
+                                     await mpcHomeCinema.OpenFileAsync("C:\\Users\\Public\\Videos\\SampleVideos\\Blue Planet II  The Prequel.wmv");
+                                     break;
+                                 case "PLANETEARTH":
+                                     await mpcHomeCinema.OpenFileAsync("C:\\Users\\Public\\Videos\\SampleVideos\\Planet Earth II Official Extended Trailer  BBC Earth.wmv");
+                                     break;
+                             }
+                         });
+                    }
                     break;
             }
-
-            /*App.Current.Dispatcher.Invoke(() =>
-            {
-                switch ((string)json.recognized[1].ToString())
-                {
-                    case "GREEN":
-                        _s.Fill = Brushes.Green;
-                        var mpcHomeCinema = new MPCHomeCinema("http://localhost:13579");
-                        var result = mpcHomeCinema.PlayAsync();
-                        break;
-                    case "BLUE":
-                        _s.Fill = Brushes.Blue;
-                        break;
-                    case "RED":
-                        _s.Fill = Brushes.Red;
-                        break;
-                }
-            });*/
-            
-
-
         }
     }
 }
